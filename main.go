@@ -2,14 +2,22 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"go-up/dao/srv"
 	"go-up/utils"
 	"log"
 )
 
+// MySQL配置
+const (
+	mysqlUrl = "localhost:3306"
+	username = "root"
+	pwd      = "qqby666"
+)
+
 func main() {
-	db, err := sql.Open("mysql", "root:qqby666@tcp(localhost:3306)/test")
+	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/go_up_test", username, pwd, mysqlUrl))
 	utils.CheckErr(err)
 	err = db.Ping()
 	utils.CheckErr(err)
