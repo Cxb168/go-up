@@ -2,7 +2,7 @@ package srv
 
 import (
 	"database/sql"
-	"go-up/dao/models"
+	models2 "go-up/week2/dao/models"
 	"log"
 )
 
@@ -14,8 +14,8 @@ func NewUserSrv(db *sql.DB) *UserSrv {
 	return &UserSrv{db: db}
 }
 
-func (srv UserSrv) Get(id int) (*models.User, bool) {
-	rtn := &models.User{}
+func (srv UserSrv) Get(id int) (*models2.User, bool) {
+	rtn := &models2.User{}
 	row := srv.db.QueryRow(`SELECT * FROM user WHERE id=?`, id)
 
 	err := row.Scan(&rtn.Id, &rtn.Name, &rtn.Age)

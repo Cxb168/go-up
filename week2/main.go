@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
-	"go-up/dao/srv"
 	"go-up/utils"
+	srv2 "go-up/week2/dao/srv"
 	"log"
 )
 
@@ -22,7 +22,7 @@ func main() {
 	err = db.Ping()
 	utils.CheckErr(err)
 
-	userSrv := srv.NewUserSrv(db)
+	userSrv := srv2.NewUserSrv(db)
 
 	for i := 1; i < 4; i++ {
 		user, has := userSrv.Get(i)
