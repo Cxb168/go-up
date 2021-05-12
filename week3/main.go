@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -8,38 +9,33 @@ import (
 
 //1. 基于 errgroup 实现一个 http server 的启动和关闭 ，以及 linux signal 信号的注册和处理，要保证能够一个退出，全部注销退出。
 
-type handle struct {
-	srv Server
-}
-
-func (h *handle) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-	resp.Write([]byte(fmt.Sprintf("Server %s health, %s\n", h.srv.Name(), time.Now().String())))
-}
-
 type HttpServer struct {
-	name string
-	addr string
+	name   string
+	addr   string
+	server *http.Server
 }
 
 func NewHttpServer(name, addr string) Server {
-	return HttpServer{
+	return &HttpServer{
 		name: name,
 		addr: addr,
 	}
 }
 
-func (s HttpServer) Start() error {
+func (s *HttpServer) Start() error {
+	server := &http.Server{Addr: s.addr}
+	s.server = server
+	serverMux := http.NewServeMux()
+	serverMux.HandleFunc("/health", func(writer http.ResponseWriter, request *http.Request) {
+		writer.Write([]byte(fmt.Sprintf("Server %s health, %s\n", s.name, time.Now().String())))
+	})
 	fmt.Printf("server %s start at %s\n", s.name, s.addr)
-	handle := &handle{srv: s}
-	return http.ListenAndServe(s.addr, handle)
+	server.Handler = serverMux
+	return server.ListenAndServe()
 }
 
-func (s HttpServer) Stop() error {
-	return nil
-}
-
-func (s HttpServer) Name() string {
-	return s.name
+func (s *HttpServer) Stop() error {
+	return s.server.Shutdown(context.Background())
 }
 
 func main() {

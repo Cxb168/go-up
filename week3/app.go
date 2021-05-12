@@ -14,7 +14,6 @@ import (
 type Server interface {
 	Start() error
 	Stop() error
-	Name() string
 }
 
 type App struct {
@@ -53,7 +52,8 @@ func (app *App) Run() error {
 			return srv.Stop()
 		})
 		g.Go(func() error {
-			return srv.Start()
+			err := srv.Start()
+			return err
 		})
 	}
 	c := make(chan os.Signal, 1)
@@ -64,7 +64,7 @@ func (app *App) Run() error {
 			case <-ctx.Done():
 				return ctx.Err()
 			case <-c:
-				return app.Stop()
+				app.Stop()
 			}
 		}
 	})
