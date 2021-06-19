@@ -2,7 +2,7 @@
 
    环境：CPU：i7-10700,   内网：32G， Window 10 64位
 
-   命令：.\redis-benchmark.exe -t set,get -n 100000 -d xxxx
+   命令：.\redis-benchmark.exe -t set,get -n 100000 -d {字节大小}
 
    结论：数据大小对读写性能影响不大。对比10k以下不同数据大小的Value，redis读写性能基本没变；即使达到100k后，99线也在1ms内；
 
