@@ -64,7 +64,7 @@ func (app *App) Run() error {
 			case <-ctx.Done():
 				return ctx.Err()
 			case <-c:
-				app.Stop()
+				return app.Stop()
 			}
 		}
 	})
