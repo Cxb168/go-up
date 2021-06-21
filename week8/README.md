@@ -8,6 +8,18 @@
 
 2. 写入一定量的 kv 数据, 根据数据大小 1w-50w 自己评估, 结合写入前后的 info memory 信息 , 分析上述不同 value 大小下，平均每个 key 的占用内存空间。
 
+   写入50w数据，key大小 10 byte，
+
+   字节value大小：          10，     20，     50，   100，   200，  1k，      5k ，
+
+   平均内存占用分别为：120.4,  120.4,  152.4,  200.4,  312.4,  1368.4, 8280.4
+
+   结论：随着value增大，平均内存占用有增长，但并非线性增长。 
+
+   
+
+
+
 
 
 | 大小（k） | get                                                          | set                                                          |
@@ -23,4 +35,29 @@
 | 20k       | ====== GET ======<br/>  100000 requests completed in 1.49 seconds<br/>  50 parallel clients<br/>  20480 bytes payload<br/>  keep alive: 1<br/><br/>100.00% <= 0 milliseconds<br/>66934.41 requests per second | ====== SET ======<br/>  100000 requests completed in 1.09 seconds<br/>  50 parallel clients<br/>  20480 bytes payload<br/>  keep alive: 1<br/><br/>99.86% <= 1 milliseconds<br/>99.91% <= 2 milliseconds<br/>99.95% <= 3 milliseconds<br/>100.00% <= 4 milliseconds<br/>100.00% <= 4 milliseconds<br/>91491.30 requests per second |
 | 50k       | ====== GET ======<br/>  100000 requests completed in 2.00 seconds<br/>  50 parallel clients<br/>  51200 bytes payload<br/>  keep alive: 1<br/><br/>91.80% <= 1 milliseconds<br/>100.00% <= 1 milliseconds<br/>50050.05 requests per second | ====== SET ======<br/>  100000 requests completed in 1.62 seconds<br/>  50 parallel clients<br/>  51200 bytes payload<br/>  keep alive: 1<br/><br/>99.54% <= 1 milliseconds<br/>99.99% <= 2 milliseconds<br/>100.00% <= 2 milliseconds<br/>61842.92 requests per second |
 | 100k      | ====== GET ======<br/>  100000 requests completed in 2.80 seconds<br/>  50 parallel clients<br/>  102400 bytes payload<br/>  keep alive: 1<br/><br/>99.97% <= 1 milliseconds<br/>100.00% <= 1 milliseconds<br/>35676.06 requests per second | ====== SET ======<br/>  100000 requests completed in 2.48 seconds<br/>  50 parallel clients<br/>  102400 bytes payload<br/>  keep alive: 1<br/><br/>0.02% <= 1 milliseconds<br/>99.67% <= 2 milliseconds<br/>99.84% <= 3 milliseconds<br/>99.91% <= 4 milliseconds<br/>99.93% <= 5 milliseconds<br/>99.98% <= 6 milliseconds<br/>100.00% <= 6 milliseconds<br/>40273.86 requests per second |
+
+
+
+
+
+# 原始内存情况
+
+used_memory:712848
+used_memory_human:696.14K
+used_memory_rss:675920
+used_memory_peak:54083472
+used_memory_peak_human:51.58M
+used_memory_lua:35840
+mem_fragmentation_ratio:0.95
+mem_allocator:jemalloc-3.6.0
+
+| value大小（byte） | 平均内存占用 | 内存情况                                                     |
+| ----------------- | ------------ | ------------------------------------------------------------ |
+| 10                | 120.4        | used_memory:60907192<br/>used_memory_human:58.09M<br/>used_memory_rss:60870264<br/>used_memory_peak:61105032<br/>used_memory_peak_human:58.27M<br/>used_memory_lua:35840<br/> |
+| 20                | 120.4        | used_memory:60907632<br/>used_memory_human:58.09M<br/>used_memory_rss:60870704<br/>used_memory_peak:61105472<br/>used_memory_peak_human:58.27M<br/>used_memory_lua:35840<br/> |
+| 50                | 152.4        | used_memory:76908040<br/>used_memory_human:73.35M<br/>used_memory_rss:76871112<br/>used_memory_peak:77105912<br/>used_memory_peak_human:73.53M<br/>used_memory_lua:35840<br/> |
+| 100               | 200.4        | used_memory:100908152<br/>used_memory_human:96.23M<br/>used_memory_rss:100871224<br/>used_memory_peak:100908152<br/>used_memory_peak_human:96.23M<br/>used_memory_lua:35840<br/> |
+| 200               | 312.4        | used_memory:156908632<br/>used_memory_human:149.64M<br/>used_memory_rss:157106472<br/>used_memory_peak:157106472<br/>used_memory_peak_human:149.83M<br/>used_memory_lua:35840<br/> |
+| 1k                | 1368.4       | used_memory:684909312<br/>used_memory_human:653.18M<br/>used_memory_rss:684872384<br/>used_memory_peak:4140909160<br/>used_memory_peak_human:3.86G<br/>used_memory_lua:35840<br/> |
+| 5k                | 8280.4       | used_memory:4140909160<br/>used_memory_human:3.86G<br/>used_memory_rss:4140872232<br/>used_memory_peak:4140909160<br/>used_memory_peak_human:3.86G<br/>used_memory_lua:35840<br/> |
 
