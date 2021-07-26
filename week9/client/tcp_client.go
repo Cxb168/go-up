@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io"
+	protocol2 "go-up/week9/protocol"
 	"net"
 	"time"
 )
@@ -12,31 +12,24 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	proto := protocol2.NewProtocol(conn)
 	go func() {
 		sendIndex := 0
 		for {
-			sendIndex ++
-			sendMsg := fmt.Sprintf("Msg: [%d]...... \n", sendIndex)
-			//sendMsg := fmt.Sprintf("Msg %d", sendIndex)
-			_, sendErr := conn.Write([]byte(sendMsg))
+			sendIndex++
+			//sendMsg := fmt.Sprintf("%d......../........./........./..", sendIndex)
+			sendMsg := fmt.Sprintf("%d...", sendIndex)
+			_, sendErr := conn.Write(proto.Encode([]byte(sendMsg)))
 			if sendErr != nil {
 				panic(sendErr)
 			}
-			fmt.Println(sendMsg)
+			//fmt.Println(sendMsg)
 			time.Sleep(time.Second)
 		}
 	}()
 
-	go func() {
-		for {
-			receive, rErr := io.ReadAll(conn)
-			if rErr != nil {
-			    panic(rErr)
-			}
-			fmt.Printf("Client revice %s\n", receive)
-		}
-	}()
-
-	select {
+	go proto.Run()
+	for info := range proto.GetChan() {
+		fmt.Printf("Client receive: %s\n", info.Body)
 	}
 }
